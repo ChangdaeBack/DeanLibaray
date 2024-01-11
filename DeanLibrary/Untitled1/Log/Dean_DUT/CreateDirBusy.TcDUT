@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <DUT Name="CreateDirBusy" Id="{66e1fbf2-9013-4358-a478-b86967256d28}">
+    <Declaration><![CDATA[TYPE CreateDirBusy :
+UNION
+	stCreateDirBusy : ST_CreateDirBusy;
+	bitCalculator : BYTE;
+END_UNION
+END_TYPE
+]]></Declaration>
+  </DUT>
+</TcPlcObject>

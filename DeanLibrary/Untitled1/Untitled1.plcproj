@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <FileVersion>1.0.0.0</FileVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{26c50ecc-9b25-4d17-bda7-42a392ba47be}</ProjectGuid>
+    <SubObjectsSortedByName>True</SubObjectsSortedByName>
+    <DownloadApplicationInfo>true</DownloadApplicationInfo>
+    <WriteProductVersion>true</WriteProductVersion>
+    <GenerateTpy>false</GenerateTpy>
+    <Name>Untitled1</Name>
+    <ProgramVersion>3.1.4024.0</ProgramVersion>
+    <Application>{3feb1cbb-ce71-41e9-bcd3-99beb66f6a91}</Application>
+    <TypeSystem>{7c169bdd-d1ba-46ae-bc77-06c0a08c25ce}</TypeSystem>
+    <Implicit_Task_Info>{67c562f2-a934-4f38-8437-f61963d78ac9}</Implicit_Task_Info>
+    <Implicit_KindOfTask>{10a07d9a-e2da-4a08-971d-84a83d54e12b}</Implicit_KindOfTask>
+    <Implicit_Jitter_Distribution>{f69e5027-ee25-4cc4-ae11-dbeb229fdc23}</Implicit_Jitter_Distribution>
+    <LibraryReferences>{73e6f6da-a66b-4f8c-a0fb-16b055db715e}</LibraryReferences>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Log\CalculateTimeStruct.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\Dean_DUT\CreateDirBusy.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\Dean_DUT\MethodStatus.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\Dean_DUT\ST_CreateDirBusy.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\Dean_DUT\ST_CreatedTime.TcDUT">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\FB_CreateFolder.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\FB_DirectoryControl.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Log\FB_UpdateCurrentSystemTime.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\MAIN.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TcUnit\FB_DirectoryContorlTest.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TcUnit\POU_Test.TcPOU">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GVLs" />
+    <Folder Include="Log" />
+    <Folder Include="Log\Dean_DUT" />
+    <Folder Include="TcUnit" />
+    <Folder Include="VISUs" />
+    <Folder Include="POUs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PlaceholderReference Include="Tc2_Standard">
+      <DefaultResolution>Tc2_Standard, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_Standard</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_System">
+      <DefaultResolution>Tc2_System, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_System</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc2_Utilities">
+      <DefaultResolution>Tc2_Utilities, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc2_Utilities</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="Tc3_Module">
+      <DefaultResolution>Tc3_Module, * (Beckhoff Automation GmbH)</DefaultResolution>
+      <Namespace>Tc3_Module</Namespace>
+    </PlaceholderReference>
+    <PlaceholderReference Include="TcUnit">
+      <DefaultResolution>TcUnit, * (www.tcunit.org)</DefaultResolution>
+    </PlaceholderReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Untitled1.tmc">
+      <SubType>Content</SubType>
+    </None>
+  </ItemGroup>
+  <ProjectExtensions>
+    <PlcProjectOptions>
+      <XmlArchive>
+  <Data>
+    <o xml:space="preserve" t="OptionKey">
+      <v n="Name">"&lt;ProjectRoot&gt;"</v>
+      <d n="SubKeys" t="Hashtable" />
+      <d n="Values" t="Hashtable" />
+    </o>
+  </Data>
+  <TypeList>
+    <Type n="Hashtable">System.Collections.Hashtable</Type>
+    <Type n="OptionKey">{54dd0eac-a6d8-46f2-8c27-2f43c7e49861}</Type>
+    <Type n="String">System.String</Type>
+  </TypeList>
+</XmlArchive>
+    </PlcProjectOptions>
+  </ProjectExtensions>
+</Project>

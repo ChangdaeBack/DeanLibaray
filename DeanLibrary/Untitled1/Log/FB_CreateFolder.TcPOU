@@ -1,0 +1,219 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_CreateFolder" Id="{4365fd78-0ce2-492d-8cac-d7e67d40b42f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_CreateFolder
+VAR_INPUT
+	sNetID : T_AmsNetId :='';
+	sBasePath : T_MaxString := 'C:\logs\'; // Last of Path needs to have '\'
+END_VAR
+VAR_OUTPUT
+	bCreateYearDone : BOOL;
+	bCreateYearMonthDayDone : BOOL;
+	bCreateYearMonthDone : BOOL;
+END_VAR
+VAR
+	updatedSystemTime : TIMESTRUCT; 
+	fbDirectoryControl : FB_DirectoryControl;
+	CreateDirBusy : CreateDirBusy;
+	
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(* Call SetTimeStruct method before create any folder *)]]></ST>
+    </Implementation>
+    <Method Name="CreateYearFolder" Id="{f5513d0d-3a56-4682-bb96-b63196df5176}">
+      <Declaration><![CDATA[METHOD CreateYearFolder
+VAR_INPUT
+END_VAR
+VAR
+	sPath : T_MaxString;
+END_VAR
+
+VAR_INST
+	sFileName : STRING(20);
+	step : INT := 10;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isYearBusy = TRUE) THEN
+	RETURN;
+END_IF
+
+CASE step OF
+	0:
+		CreateDirBusy.stCreateDirBusy.isYearBusy := FALSE;
+		bCreateYearDone := FALSE;
+		step := 10;
+	10:
+		CreateDirBusy.stCreateDirBusy.isYearBusy := TRUE;
+		
+		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wYear), ' Year');
+		sPath := CONCAT(sBasePath, sFileName);
+		
+		fbDirectoryControl.CreateDirectory(sPath := sPath);
+		IF NOT fbDirectoryCOntrol.CreateDirectoryStatus.Busy THEN
+			step := 20;
+		END_IF
+	20:
+		
+		fbDirectoryControl.CheckDirectory(sSearchDirectoryPath := sBasePath, sCreatedFolderName := sFileName);
+		IF NOT fbDirectoryControl.CheckDirectoryStatus.Busy THEN
+			step := 30;
+		END_IF
+		
+	30:
+		IF fbDirectoryControl.hasDirecotryChecked THEN
+			step := 0;
+			bCreateYearDone := TRUE;
+		ELSE
+			step := 10;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CreateYearMonthDayFolder" Id="{fb6374c8-a3a6-40c8-95fa-5abdef51abe9}">
+      <Declaration><![CDATA[METHOD CreateYearMonthDayFolder
+
+VAR
+	sPath : T_MaxString;
+END_VAR
+VAR_INST
+	step : INT;
+	sFileName : STRING(20);
+	sDayBasePath : T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CreateYearMonthFolder();
+
+IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isDayBusy = TRUE) THEN
+	RETURN;
+END_IF
+
+CASE step OF
+	0:
+		CreateDirBusy.stCreateDirBusy.isDayBusy := FALSE;
+		bCreateYearMonthDayDone := FALSE;
+		step := 100;
+	 
+	100:
+		CreateDirBusy.stCreateDirBusy.isDayBusy := TRUE;
+		
+		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wDay), ' Day');
+		sDayBasePath := CONCAT(sBasePath, WORD_TO_STRING(updatedSystemTime.wYear));
+		sDayBasePath := CONCAT(sDayBasePath, ' Year' );
+		sDayBasePath := CONCAT(sDayBasePath, '\' );
+		sDayBasePath := CONCAT(sDayBasePath, WORD_TO_STRING(updatedSystemTime.wMonth));
+		sDayBasePath := CONCAT(sDayBasePath, ' Month' );
+		sDayBasePath := CONCAT(sDayBasePath,'\' );
+		sPath := CONCAT(sDayBasePath,sFileName);
+		
+		
+		fbDirectoryControl.CreateDirectory(sPath := sPath);
+		IF NOT fbDirectoryCOntrol.CreateDirectoryStatus.Busy THEN
+			step := 200;
+		END_IF
+	200:
+		fbDirectoryControl.CheckDirectory(sSearchDirectoryPath := sDayBasePath, sCreatedFolderName := sFileName);
+		IF NOT fbDirectoryControl.CheckDirectoryStatus.Busy THEN
+			step := 300;
+		END_IF
+		
+	300:
+		IF fbDirectoryControl.hasDirecotryChecked THEN
+			step := 0;
+			bCreateYearMonthDayDone := true;
+		ELSE
+			step := 100;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CreateYearMonthFolder" Id="{a6e6051f-45ef-4436-a196-456268b873fd}">
+      <Declaration><![CDATA[METHOD CreateYearMonthFolder
+VAR_INPUT
+END_VAR
+
+VAR
+	sPath : T_MaxString;
+END_VAR
+
+VAR_INST
+	step : INT;
+	sFileName : STRING(20);
+	sMonthBasePath : T_MaxString;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CreateYearFolder();
+
+
+IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isMonthBusy = TRUE) THEN
+	RETURN;
+END_IF
+
+
+CASE step OF
+	0:
+		CreateDirBusy.stCreateDirBusy.isMonthBusy := FALSE;
+		bCreateYearMonthDone := FALSE;
+		step := 100;
+	 
+	100:
+		CreateDirBusy.stCreateDirBusy.isMonthBusy := TRUE;
+		
+		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wMonth), ' Month');
+		sMonthBasePath := CONCAT(sBasePath, WORD_TO_STRING(updatedSystemTime.wYear));
+		sMonthBasePath := CONCAT(sMonthBasePath, ' Year');
+		sMonthBasePath := CONCAT(sMonthBasePath,'\' );
+		sPath := CONCAT(sMonthBasePath,sFileName);
+		
+		
+		fbDirectoryControl.CreateDirectory(sPath := sPath);
+		IF NOT fbDirectoryCOntrol.CreateDirectoryStatus.Busy THEN
+			step := 200;
+		END_IF
+	200:
+		fbDirectoryControl.CheckDirectory(sSearchDirectoryPath := sMonthBasePath, sCreatedFolderName := sFileName);
+		IF NOT fbDirectoryControl.CheckDirectoryStatus.Busy THEN
+			step := 300;
+		END_IF
+		
+	300:
+		IF fbDirectoryControl.hasDirecotryChecked THEN
+			step := 0;
+			bCreateYearMonthDone := TRUE;
+		ELSE
+			step := 100;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="FB_init" Id="{4a04fc2f-29d1-4888-be14-59af92fbe877}">
+      <Declaration><![CDATA[METHOD FB_init : BOOL
+VAR_INPUT
+	bInitRetains : BOOL; // if TRUE, the retain variables are initialized (warm start / cold start)
+	bInCopyCode : BOOL;  // if TRUE, the instance afterwards gets moved into the copy code (online change)
+	sNetID : T_AmsNetId :='';
+	sBasePath : T_MaxString := 'C:\logs\'; // Last of Path needs to have '\'
+	
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[THIS^.sNetID := sNetId;
+THIS^.sBasePath := sBasePath;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="SetTimeStruct" Id="{e3c7f912-9edf-4a8e-92fc-90a9f3b60f28}">
+      <Declaration><![CDATA[METHOD SetTimeStruct
+VAR_INPUT
+	SystemTime : TIMESTRUCT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[(* If this is creating folder time shouldn't be changed *)
+IF NOT (THIS^.CreateDirBusy.bitCalculator = 0) THEN
+	RETURN;
+END_IF
+
+THIS^.updatedSystemTime := SystemTime;]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

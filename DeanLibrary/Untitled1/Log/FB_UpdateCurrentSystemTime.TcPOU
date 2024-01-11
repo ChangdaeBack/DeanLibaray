@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_UpdateCurrentSystemTime" Id="{b52e9ebe-ae13-4ba8-a998-6de901f8793f}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_UpdateCurrentSystemTime
+VAR_INPUT
+	UpdateDelay: TIME := T#0S;
+END_VAR
+VAR_OUTPUT
+	updatedSystemTime		: TIMESTRUCT;
+END_VAR
+VAR
+	step 					: INT;
+	UpdateTimer			 	: TON;
+	GetTime					: NT_GetTime;
+	UpdatedCount 		: UINT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE step OF
+	0:
+		GetTime(
+		NETID:= , 
+		START:= FALSE, 
+		TMOUT:= , 
+		BUSY=> , 
+		ERR=> , 
+		ERRID=> , 
+		TIMESTR=>updatedSystemTime);
+		UpdateTimer(In:=TRUE, PT := UpdateDelay);
+		IF UpdateTimer.Q THEN
+			step := 10;
+			UpdateTimer(In:=FALSE, PT := UpdateDelay);
+		END_IF
+		
+	10:
+		GetTime(
+		NETID:= , 
+		START:= TRUE, 
+		TMOUT:= , 
+		BUSY=> , 
+		ERR=> , 
+		ERRID=> , 
+		TIMESTR=>updatedSystemTime);
+		
+		IF NOT GetTime.BUSY THEN
+			IF GetTime.ERR THEN
+				step := 99;
+			ELSE
+				step := 20;
+			END_IF
+		END_IF
+	20:
+		IF UpdatedCount >= 65500 THEN
+			UpdatedCount := 0;
+		END_IF
+		UpdatedCount := UpdatedCount + 1;
+		step := 0;
+	99:
+		step := 0;
+END_CASE]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

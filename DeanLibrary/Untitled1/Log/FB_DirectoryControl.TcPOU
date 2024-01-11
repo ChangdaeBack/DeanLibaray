@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DirectoryControl" Id="{5ec1948c-86ba-4ffe-8dc6-482269c94fd9}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_DirectoryControl
+VAR_INPUT
+	isEnabled_ReprotError : BOOL := FALSE;
+	sNetID : T_AmsNetId :='';
+	ErrorReset : BOOL;
+END_VAR
+
+VAR_OUTPUT
+	CreateDirectoryStatus : MethodStatus;
+	CheckDirectoryStatus : MethodStatus;
+	hasDirecotryChecked : BOOL;
+END_VAR
+
+VAR
+	stCreatedTime 		: ST_CreatedTime;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[]]></ST>
+    </Implementation>
+    <Method Name="CheckDirectory" Id="{14d8bd96-7b4b-4aa4-a31a-908c4f10ddcd}">
+      <Declaration><![CDATA[METHOD CheckDirectory
+VAR_INPUT
+	sSearchDirectoryPath : T_MaxString; // ex) C:\Test\
+	sCreatedFolderName : STRING;
+END_VAR
+VAR
+	
+END_VAR
+VAR_INST
+	fbEnumFindFileEntry : FB_EnumFindFileEntry;
+	step : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE step OF
+	0:
+		step := 1;
+		THIS^.CheckDirectoryStatus.Busy := FALSE;
+		fbEnumFindFileEntry.eCmd := eEnumCmd_First;
+		THIS^.hasDirecotryChecked := FALSE;
+
+	1:
+		fbEnumFindFileEntry(bExecute := FALSE);
+		THIS^.CheckDirectoryStatus.Busy := TRUE;
+
+		step := 10;
+	
+	10:
+		sSearchDirectoryPath := CONCAT(sSearchDirectoryPath,'*.*');
+		fbEnumFindFileEntry(bExecute := TRUE
+							,sPathName := sSearchDirectoryPath);
+		IF NOT fbEnumFindFileEntry.bBusy THEN
+			IF NOT fbEnumFindFileEntry.bError THEN
+				step := 20;
+			ELSE
+				step := 99;
+			END_IF
+		END_IF
+	
+	20:
+		fbEnumFindFileEntry(bExecute := FALSE);
+		IF NOT fbEnumFindFileEntry.bBusy THEN
+			IF NOT fbEnumFindFileEntry.bError THEN
+				IF NOT fbEnumFindFileEntry.bEOE THEN
+					IF  NOT (fbEnumFindFileEntry.stFindFile.sFileName = '.') AND NOT (fbEnumFindFileEntry.stFindFile.sFileName = '..') THEN
+						IF fbEnumFindFileEntry.stFindFile.sFileName = sCreatedFolderName THEN
+							THIS^.CheckDirectoryStatus.Busy := FALSE;
+							THIS^.hasDirecotryChecked := TRUE;
+							step := 0;
+						END_IF
+						fbEnumFindFileEntry.eCmd := eEnumCmd_Next;
+						step := 10;	
+					ELSE
+						step := 1;
+						fbEnumFindFileEntry.eCmd := eEnumCmd_Next;
+					END_IF
+				ELSE
+					step := 0;
+				END_IF
+			ELSE
+				step := 99;
+			END_IF
+		END_IF
+		
+	99: //Error
+		IF NOT isEnabled_ReprotError OR THIS^.ErrorReset THEN
+			THIS^.ErrorReset := FALSE;
+			step := 1;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="CreateDirectory" Id="{81dffcdd-b234-4700-80ee-055f9cb6d674}">
+      <Declaration><![CDATA[METHOD CreateDirectory
+VAR_INPUT
+	sPath : T_MaxString;
+END_VAR
+VAR
+	
+END_VAR
+VAR_INST
+	fbCreatedir : FB_Createdir;
+	step : INT;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[CASE step OF
+	0:
+		CreateDirectoryStatus.Busy := FALSE;
+		fbCreatedir(bExecute := FALSE);
+		hasDirecotryChecked := FALSE;
+		step := 10;
+		
+	10:
+		
+		CreateDirectoryStatus.Busy := TRUE;
+		fbCreatedir(bExecute := TRUE,
+					sPathName := sPath,
+					sNetId := sNetID);
+		step := 20;
+		
+	20:
+		fbCreatedir(bExecute := FALSE,
+					sPathName := sPath);
+		IF NOT fbCreatedir.bBusy THEN
+			IF fbCreatedir.bBusy THEN
+				step := 99;
+			ELSE
+				step := 0;
+			END_IF
+		END_IF
+		
+	99: //ERROR
+		CreateDirectoryStatus.ErrorID := fbCreatedir.nErrId;
+		IF NOT isEnabled_ReprotError OR ErrorReset THEN
+			step := 0;
+			ErrorReset := FALSE;
+		END_IF
+END_CASE]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

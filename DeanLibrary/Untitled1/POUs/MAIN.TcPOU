@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="MAIN" Id="{950fdb80-d0b4-429a-ae50-eca2f5b2f0cf}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	fbCreateFolder : FB_CreateFolder(sNetID := '', sBasePath := 'C:\createFoldertest\');
+	fbDirectoryControl : FB_DirectoryControl;
+	fbUpdateSystemTime : FB_UpdateCurrentSystemTime;
+	sPathTest : T_MaxString  := 'C:\test';
+	step : INT;
+	stTimeTest : Timestruct;
+	stTime : Timestruct;
+	bInit: BOOL;
+	calTimeStruct : CalculateTimeStruct;
+	bTest: BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbUpdateSystemTime();
+IF bInit THEN
+	stTimeTest := fbUpdateSystemTime.updatedSystemTime;
+END_IF
+
+CASE step OF
+//	0:
+//		sCheckPath := CONCAT(sPath, '\*.*');
+//	1:
+//		fbDirectoryControl.CreateDirectory(sPath := sPath);
+//		IF NOT fbDirectoryControl.CreateDirectoryStatus.Busy THEN
+//			step := 2;
+//		END_IF
+		 
+//	2:
+//		fbDirectoryControl.CheckDirectory(sSeachDirectoryPath := 'C:\logTest\*.*', sCreatedFolderName := INT_TO_STRING(nTest));
+//		IF NOT fbDirectoryControl.CheckDirectoryStatus.Busy THEN
+//			step := 3;
+//		END_IF
+//	3:
+//		IF fbDirectoryControl.hasDirecotryChecked THEN
+//			step := 4;
+//		ELSE
+//			step:=1;
+//		END_IF
+//	4:
+//		nTest := nTest + 1;
+//		step := 1;
+		
+//		IF nTest = 10000 THEN
+//			step := 0;
+//			nTest := 0;
+//		END_IF
+		
+//		sPath := CONCAT( 'C:\logTest\' ,INT_TO_STRING(nTest));
+
+	5:
+		fbCreateFolder.SetTimeStruct(stTimeTest);
+		fbCreateFolder.CreateYearFolder();
+	
+	6:
+		fbCreateFolder.SetTimeStruct(stTimeTest);
+		fbCreateFolder.CreateYearMonthDayFolder();
+		IF fbCreateFolder.bCreateYearMonthDone THEN
+			step := 8;
+		END_IF
+	
+	7:
+		fbCreateFolder.SetTimeStruct(stTimeTest);
+		fbCreateFolder.CreateYearMonthFolder();	
+		IF fbCreateFolder.bCreateYearMonthDone THEN
+			step := 8;
+		END_IF
+
+	
+	8:
+		stTimeTest.wDay := stTimeTest.wDay + 1;
+		step := 6;
+	
+	9:
+	
+	
+END_CASE
+
+IF bTest THEN
+	calTimeStruct(TimeStruct := stTime);
+	stTime.wMinute := stTime.wMinute + 1;
+END_IF
+
+
+(*------------------------------------ TEST ------------------------------------------------*)]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

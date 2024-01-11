@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="FB_DirectoryContorlTest" Id="{82fe1301-1a45-494b-9089-8d51e5aaed18}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK FB_DirectoryContorlTest EXTENDS TcUnit.FB_TestSuite 
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CreateDictionaryTest();]]></ST>
+    </Implementation>
+    <Method Name="CreateDictionaryTest" Id="{2a402643-5da0-470f-ab5b-f1f8ca379479}">
+      <Declaration><![CDATA[METHOD CreateDictionaryTest
+VAR_INPUT
+END_VAR
+
+VAR_INST
+	Timer : TON := (PT := T#50S);
+	fbDirectoryControl : FB_DirectoryControl;
+	bDone : REFERENCE TO BOOL;
+END_VAR]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[IF TEST_ORDERED('CreateDiectionaryTest') THEN
+	Timer(In:=TRUE);
+	
+	
+	IF Timer.Q THEN
+		
+		AssertEquals(Expected := bDone
+					,Actual := bDone
+					,Message := 'CreateDirectoryFail' );
+	
+		TEST_FINISHED();
+	END_IF
+END_IF]]></ST>
+      </Implementation>
+    </Method>
+  </POU>
+</TcPlcObject>

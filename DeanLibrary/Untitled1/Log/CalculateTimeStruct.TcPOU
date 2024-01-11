@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="CalculateTimeStruct" Id="{9734162c-2fdf-4fac-a15f-7aa2a8e7a37e}" SpecialFunc="None">
+    <Declaration><![CDATA[(* Calculate TimeStructure *)
+FUNCTION_BLOCK CalculateTimeStruct
+VAR_IN_OUT
+	TimeStruct : TimeStruct;	
+END_VAR
+
+VAR
+	isLeapYear : BOOL;
+	bDone : BOOL;
+	bError : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF TimeStruct.wMilliseconds > 999 THEN
+	TimeStruct.wSecond := TimeStruct.wSecond + (TimeStruct.wMilliseconds / 1000);
+	TimeStruct.wMilliseconds := TimeStruct.wMilliseconds MOD 1000;
+END_IF
+
+IF TimeStruct.wSecond > 59 THEN
+	TimeStruct.wMinute := TimeStruct.wMinute + (TimeStruct.wSecond / 60);
+	TimeStruct.wSecond := TimeStruct.wSecond MOD 60;
+END_IF
+
+IF TimeStruct.wMinute > 59 THEN
+	TimeStruct.wHour := TimeStruct.wHour + (TimeStruct.wMinute / 60);
+	TimeStruct.wMinute := TimeStruct.wMinute MOD 60;
+END_IF
+
+IF TimeStruct.wHour > 23 THEN
+	TimeStruct.wDay := TimeStruct.wDay + (TimeStruct.wHour / 24);
+	TimeStruct.wHour := TimeStruct.wHour MOD 24;
+END_IF
+
+
+
+REPEAT 
+	CASE TimeStruct.wMonth OF
+	1,3,5,7,8,10,12:
+		IF TimeStruct.wDay > 31 THEN
+			TimeStruct.wMonth := TimeStruct.wMonth + 1;
+			TimeStruct.wDay := TimeStruct.wDay - 31;
+		END_IF
+	4,6,9,11:
+		IF TimeStruct.wDay > 30 THEN
+			TimeStruct.wMonth := TimeStruct.wMonth + 1;
+			TimeStruct.wDay := TimeStruct.wDay - 30;
+		END_IF
+	
+	2: // Calculate Leap Year
+		IF ((TimeStruct.wYear MOD 4 = 0) AND NOT(TimeStruct.wYear MOD 100 = 0)) OR (TimeStruct.wYear MOD 4 = 0 AND TimeStruct.wYear MOD 100 = 0 AND TimeStruct.wYear MOD 400 = 0) THEN
+			//29days
+			IF TimeStruct.wDay > 29 THEN
+				TimeStruct.wMonth := TimeStruct.wMonth + 1;
+				TimeStruct.wDay := TimeStruct.wDay - 29;	
+			END_IF
+			isLeapYear := TRUE;
+		ELSE
+			//28days
+			IF TimeStruct.wDay > 28 THEN
+				TimeStruct.wMonth := TimeStruct.wMonth + 1;
+				TimeStruct.wDay := TimeStruct.wDay - 28;
+			END_IF
+			isLeapYear := FALSE;
+		END_IF
+	0:
+		EXIT;
+		
+	ELSE
+		IF TimeStruct.wMonth > 12 THEN
+			TimeStruct.wYear := TimeStruct.wYear + 1;
+			TimeStruct.wMonth := TimeStruct.wMonth - 12;
+		ELSE
+			bError := TRUE;
+			EXIT;
+		END_IF 
+	END_CASE
+	
+	IF TimeStruct.wMonth = 1 AND TImeStruct.wDay <= 31 OR
+		TimeStruct.wMonth = 2 AND isLeapYear AND TImeStruct.wDay <= 29 OR
+		TimeStruct.wMonth = 2 AND NOT isLeapYear AND TImeStruct.wDay <= 28 OR
+		TimeStruct.wMonth = 3 AND TImeStruct.wDay <= 31 OR
+		TimeStruct.wMonth = 4 AND TImeStruct.wDay <= 30 OR
+		TimeStruct.wMonth = 5 AND TImeStruct.wDay <= 31 OR
+		TimeStruct.wMonth = 6 AND TImeStruct.wDay <= 30 OR
+		TimeStruct.wMonth = 7 AND TImeStruct.wDay <= 31 OR
+		TimeStruct.wMonth = 8 AND TImeStruct.wDay <= 31 OR
+		TimeStruct.wMonth = 9 AND TImeStruct.wDay <= 30 OR
+		TimeStruct.wMonth = 10 AND TImeStruct.wDay <= 31 OR
+		TimeStruct.wMonth = 11 AND TImeStruct.wDay <= 30 OR
+		TimeStruct.wMonth = 12 AND TImeStruct.wDay <= 31 THEN
+		
+		bDone := TRUE;
+		bError := FALSE;
+	ELSE
+		bDone := FALSE;
+	END_IF
+UNTIL
+	bDone
+END_REPEAT
+
+
+IF TimeStruct.wMonth > 12 THEN
+	TimeStruct.wYear := TimeStruct.wYear + (TimeStruct.wMonth / 12);
+	TimeStruct.wMonth := TimeStruct.wMonth MOD 12;
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

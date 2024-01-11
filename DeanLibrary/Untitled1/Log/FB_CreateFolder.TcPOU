@@ -45,7 +45,7 @@ CASE step OF
 	10:
 		CreateDirBusy.stCreateDirBusy.isYearBusy := TRUE;
 		
-		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wYear), ' Year');
+		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wYear), 'Y');
 		sPath := CONCAT(sBasePath, sFileName);
 		
 		fbDirectoryControl.CreateDirectory(sPath := sPath);
@@ -96,12 +96,11 @@ CASE step OF
 	100:
 		CreateDirBusy.stCreateDirBusy.isDayBusy := TRUE;
 		
-		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wDay), ' Day');
+		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wDay), 'th');
 		sDayBasePath := CONCAT(sBasePath, WORD_TO_STRING(updatedSystemTime.wYear));
-		sDayBasePath := CONCAT(sDayBasePath, ' Year' );
+		sDayBasePath := CONCAT(sDayBasePath, 'Y' );
 		sDayBasePath := CONCAT(sDayBasePath, '\' );
-		sDayBasePath := CONCAT(sDayBasePath, WORD_TO_STRING(updatedSystemTime.wMonth));
-		sDayBasePath := CONCAT(sDayBasePath, ' Month' );
+		sDayBasePath := CONCAT(sDayBasePath,F_GetDayOfWeek(updatedSystemTime.wMonth));
 		sDayBasePath := CONCAT(sDayBasePath,'\' );
 		sPath := CONCAT(sDayBasePath,sFileName);
 		
@@ -158,9 +157,9 @@ CASE step OF
 	100:
 		CreateDirBusy.stCreateDirBusy.isMonthBusy := TRUE;
 		
-		sFileName := CONCAT(WORD_TO_STRING(updatedSystemTime.wMonth), ' Month');
+		sFileName := F_GetDayOfWeek(THIS^.updatedSystemTime.wMonth);
 		sMonthBasePath := CONCAT(sBasePath, WORD_TO_STRING(updatedSystemTime.wYear));
-		sMonthBasePath := CONCAT(sMonthBasePath, ' Year');
+		sMonthBasePath := CONCAT(sMonthBasePath, 'Y');
 		sMonthBasePath := CONCAT(sMonthBasePath,'\' );
 		sPath := CONCAT(sMonthBasePath,sFileName);
 		

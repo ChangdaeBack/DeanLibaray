@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="F_GetDayOfWeek" Id="{97e5e4a0-417a-463b-a37e-4a12bcec2c19}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION F_GetDayOfWeek : STRING(4)
+VAR_INPUT
+	wMonth : WORD;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[CASE wMonth OF
+	1:
+		F_GetDayOfWeek := 'Jan';
+	2:  
+		F_GetDayOfWeek := 'Feb';
+	3:  
+		F_GetDayOfWeek := 'Mar';
+	4:  
+		F_GetDayOfWeek := 'Apr';
+	5:  
+		F_GetDayOfWeek := 'May';
+	6:  
+		F_GetDayOfWeek := 'Jun';
+	7:  
+		F_GetDayOfWeek := 'Jul';
+	8:  
+		F_GetDayOfWeek := 'Aug';
+	9:  
+		F_GetDayOfWeek := 'Sep';
+	10: 
+		F_GetDayOfWeek := 'Oct';
+	11: 
+		F_GetDayOfWeek := 'Nov';
+	12: 
+		F_GetDayOfWeek := 'Dec';
+END_CASE]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

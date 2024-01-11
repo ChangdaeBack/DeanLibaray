@@ -4,13 +4,14 @@
     <Declaration><![CDATA[(* Calculate TimeStructure *)
 FUNCTION_BLOCK CalculateTimeStruct
 VAR_IN_OUT
-	TimeStruct : TimeStruct;	
+	TimeStruct : TIMESTRUCT; 
 END_VAR
 
 VAR
 	isLeapYear : BOOL;
 	bDone : BOOL;
 	bError : BOOL;
+	
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF TimeStruct.wMilliseconds > 999 THEN

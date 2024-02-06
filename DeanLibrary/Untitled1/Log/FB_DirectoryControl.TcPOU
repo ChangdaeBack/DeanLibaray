@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_DirectoryControl" Id="{5ec1948c-86ba-4ffe-8dc6-482269c94fd9}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_DirectoryControl
+    <Declaration><![CDATA[(* This FB is for FB_CreateFolder *)
+FUNCTION_BLOCK FB_DirectoryControl
 VAR_INPUT
 	isEnabled_ReprotError : BOOL := FALSE;
 	sNetID : T_AmsNetId :='';
@@ -12,10 +13,6 @@ VAR_OUTPUT
 	CreateDirectoryStatus : MethodStatus;
 	CheckDirectoryStatus : MethodStatus;
 	hasDirecotryChecked : BOOL;
-END_VAR
-
-VAR
-	stCreatedTime 		: ST_CreatedTime;
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[]]></ST>
@@ -44,7 +41,6 @@ END_VAR]]></Declaration>
 	1:
 		fbEnumFindFileEntry(bExecute := FALSE);
 		THIS^.CheckDirectoryStatus.Busy := TRUE;
-
 		step := 10;
 	
 	10:

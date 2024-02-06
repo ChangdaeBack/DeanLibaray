@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="ReadMe" Id="{11cc9a99-5513-415e-98e2-65b91c9f23a1}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM ReadMe
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[(*
+
+Function Block
+ - InOutput, InPut, Output are intended to use from other program
+ - Properties are intended for Encapsulation
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*)]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

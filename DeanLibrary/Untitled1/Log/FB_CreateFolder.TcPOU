@@ -1,24 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
   <POU Name="FB_CreateFolder" Id="{4365fd78-0ce2-492d-8cac-d7e67d40b42f}" SpecialFunc="None">
-    <Declaration><![CDATA[FUNCTION_BLOCK FB_CreateFolder
+    <Declaration><![CDATA[(* Call SetTimeStruct method before create any folder *)
+
+FUNCTION_BLOCK FB_CreateFolder
 VAR_INPUT
 	sNetID : T_AmsNetId :='';
 	sBasePath : T_MaxString := 'C:\logs\'; // Last of Path needs to have '\'
 END_VAR
 VAR_OUTPUT
-	bCreateYearDone : BOOL;
-	bCreateYearMonthDayDone : BOOL;
-	bCreateYearMonthDone : BOOL;
+	isCreatedYearFolder : BOOL;
+	isCreatedYearMonthDayFolder : BOOL;
+	isCreatedYearMonthFolder : BOOL;
 END_VAR
 VAR
 	updatedSystemTime : TIMESTRUCT; 
 	fbDirectoryControl : FB_DirectoryControl;
 	CreateDirBusy : CreateDirBusy;
-	
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[(* Call SetTimeStruct method before create any folder *)]]></ST>
+      <ST><![CDATA[]]></ST>
     </Implementation>
     <Method Name="CreateYearFolder" Id="{f5513d0d-3a56-4682-bb96-b63196df5176}">
       <Declaration><![CDATA[METHOD CreateYearFolder
@@ -31,16 +32,22 @@ END_VAR
 VAR_INST
 	sFileName : STRING(20);
 	step : INT := 10;
+	TimeOutTimer : StepTimeOutTimer;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isYearBusy = TRUE) THEN
+        <ST><![CDATA[TimeOutTimer(step := step);
+IF TimeOutTimer.hasTimeOut THEN
+	StepReset(step := step);
+END_IF
+
+IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isYearBusy = TRUE) THEN
 	RETURN;
 END_IF
 
 CASE step OF
 	0:
 		CreateDirBusy.stCreateDirBusy.isYearBusy := FALSE;
-		bCreateYearDone := FALSE;
+		isCreatedYearFolder := FALSE;
 		step := 10;
 	10:
 		CreateDirBusy.stCreateDirBusy.isYearBusy := TRUE;
@@ -62,7 +69,7 @@ CASE step OF
 	30:
 		IF fbDirectoryControl.hasDirecotryChecked THEN
 			step := 0;
-			bCreateYearDone := TRUE;
+			isCreatedYearFolder := TRUE;
 		ELSE
 			step := 10;
 		END_IF
@@ -79,9 +86,15 @@ VAR_INST
 	step : INT;
 	sFileName : STRING(20);
 	sDayBasePath : T_MaxString;
+	TimeOutTimer : StepTimeOutTimer;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[CreateYearMonthFolder();
+        <ST><![CDATA[TimeOutTimer(step := step);
+IF TimeOutTimer.hasTimeOut THEN
+	StepReset(step := step);
+END_IF
+
+CreateYearMonthFolder();
 
 IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isDayBusy = TRUE) THEN
 	RETURN;
@@ -90,7 +103,7 @@ END_IF
 CASE step OF
 	0:
 		CreateDirBusy.stCreateDirBusy.isDayBusy := FALSE;
-		bCreateYearMonthDayDone := FALSE;
+		isCreatedYearMonthDayFolder := FALSE;
 		step := 100;
 	 
 	100:
@@ -118,11 +131,12 @@ CASE step OF
 	300:
 		IF fbDirectoryControl.hasDirecotryChecked THEN
 			step := 0;
-			bCreateYearMonthDayDone := true;
+			isCreatedYearMonthDayFolder := TRUE; 
 		ELSE
 			step := 100;
 		END_IF
-END_CASE]]></ST>
+END_CASE
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="CreateYearMonthFolder" Id="{a6e6051f-45ef-4436-a196-456268b873fd}">
@@ -138,9 +152,15 @@ VAR_INST
 	step : INT;
 	sFileName : STRING(20);
 	sMonthBasePath : T_MaxString;
+	TimeOutTimer : StepTimeOutTimer;
 END_VAR]]></Declaration>
       <Implementation>
-        <ST><![CDATA[CreateYearFolder();
+        <ST><![CDATA[TimeOutTimer(step := step);
+IF TimeOutTimer.hasTimeOut THEN
+	StepReset(step := step);
+END_IF
+
+CreateYearFolder();
 
 
 IF NOT(CreateDirBusy.bitCalculator = 0 OR CreateDirBusy.stCreateDirBusy.isMonthBusy = TRUE) THEN
@@ -151,7 +171,7 @@ END_IF
 CASE step OF
 	0:
 		CreateDirBusy.stCreateDirBusy.isMonthBusy := FALSE;
-		bCreateYearMonthDone := FALSE;
+		isCreatedYearMonthFolder := FALSE;
 		step := 100;
 	 
 	100:
@@ -177,11 +197,12 @@ CASE step OF
 	300:
 		IF fbDirectoryControl.hasDirecotryChecked THEN
 			step := 0;
-			bCreateYearMonthDone := TRUE;
+			isCreatedYearMonthFolder := TRUE;
 		ELSE
 			step := 100;
 		END_IF
-END_CASE]]></ST>
+END_CASE
+]]></ST>
       </Implementation>
     </Method>
     <Method Name="FB_init" Id="{4a04fc2f-29d1-4888-be14-59af92fbe877}">
@@ -212,6 +233,17 @@ IF NOT (THIS^.CreateDirBusy.bitCalculator = 0) THEN
 END_IF
 
 THIS^.updatedSystemTime := SystemTime;]]></ST>
+      </Implementation>
+    </Method>
+    <Method Name="StepReset" Id="{0e8b9b31-b3c5-4ed1-b681-fb482de103ca}">
+      <Declaration><![CDATA[METHOD StepReset
+VAR_INPUT
+	Step : REFERENCE TO INT;
+END_VAR
+]]></Declaration>
+      <Implementation>
+        <ST><![CDATA[step := 0;
+This^.CreateDirBusy.bitCalculator := 0;]]></ST>
       </Implementation>
     </Method>
   </POU>

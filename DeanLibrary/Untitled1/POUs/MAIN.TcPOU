@@ -4,7 +4,6 @@
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
 	fbCreateFolder : FB_CreateFolder(sNetID := '', sBasePath := 'C:\createFoldertest\');
-	fbDirectoryControl : FB_DirectoryControl;
 	fbUpdateSystemTime : FB_UpdateCurrentSystemTime;
 	sPathTest : T_MaxString  := 'C:\test';
 	step : INT;
@@ -21,34 +20,32 @@ IF bInit THEN
 END_IF
 
 CASE step OF
-
 	5:
 		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
 		fbCreateFolder.CreateYearFolder();
+		IF fbCreateFolder.isCreatedYearFolder THEN
+			step := 8;
+		END_IF
 	
 	6:
 		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
 		fbCreateFolder.CreateYearMonthDayFolder();
-		IF fbCreateFolder.bCreateYearMonthDone THEN
+		IF fbCreateFolder.isCreatedYearMonthDayFolder THEN
 			step := 8;
 		END_IF
 	
 	7:
 		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
 		fbCreateFolder.CreateYearMonthFolder();	
-		IF fbCreateFolder.bCreateYearMonthDone THEN
+		IF fbCreateFolder.isCreatedYearMonthFolder THEN
 			step := 8;
 		END_IF
 
 	
 	8:
-		TIMESTRUCT.wDay := TIMESTRUCT.wDay + 1;
+		TIMESTRUCT.wYear := TIMESTRUCT.wYear + 1;
 		calTimeStruct(TimeStruct := TimeStruct);
-		step := 6;
-	
-	9:
-	
-	
+		step := 5;	
 END_CASE
 
 

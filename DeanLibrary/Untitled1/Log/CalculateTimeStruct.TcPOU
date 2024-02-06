@@ -11,7 +11,6 @@ VAR
 	isLeapYear : BOOL;
 	bDone : BOOL;
 	bError : BOOL;
-	
 END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[IF TimeStruct.wMilliseconds > 999 THEN

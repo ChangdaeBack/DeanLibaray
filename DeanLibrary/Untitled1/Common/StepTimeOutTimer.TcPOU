@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="StepTimeOutTimer" Id="{d4de079f-07ca-44b1-9d08-dc0e965eeb4c}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK StepTimeOutTimer
+VAR_IN_OUT
+	step : INT;
+END_VAR
+VAR_INPUT
+	TimeOut : TIME := T#30S;
+END_VAR
+VAR_OUTPUT
+	hasTimeOut : BOOL;
+END_VAR
+VAR
+	Timer : TON;
+	oldStep : INT;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[Timer(IN := oldStep = step, PT := TimeOut);
+IF Timer.Q THEN
+	hasTimeOut := TRUE;
+ELSE
+	hasTimeOut := FALSE;
+END_IF
+oldStep := step;]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

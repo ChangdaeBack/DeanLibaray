@@ -3,54 +3,10 @@
   <POU Name="MAIN" Id="{950fdb80-d0b4-429a-ae50-eca2f5b2f0cf}" SpecialFunc="None">
     <Declaration><![CDATA[PROGRAM MAIN
 VAR
-	fbCreateFolder : FB_CreateFolder(sNetID := '', sBasePath := 'C:\createFoldertest\');
-	fbUpdateSystemTime : FB_UpdateCurrentSystemTime;
-	sPathTest : T_MaxString  := 'C:\test';
-	step : INT;
-	TimeStruct : TIMESTRUCT;
-	bInit: BOOL;
-	calTimeStruct : CalculateTimeStruct;
-	bTest: BOOL;
+	
 END_VAR]]></Declaration>
     <Implementation>
-      <ST><![CDATA[fbUpdateSystemTime();
-IF bInit THEN
-	bInit := FALSE;
-	TIMESTRUCT := fbUpdateSystemTime.updatedSystemTime;
-END_IF
-
-CASE step OF
-	5:
-		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
-		fbCreateFolder.CreateYearFolder();
-		IF fbCreateFolder.isCreatedYearFolder THEN
-			step := 8;
-		END_IF
-	
-	6:
-		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
-		fbCreateFolder.CreateYearMonthDayFolder();
-		IF fbCreateFolder.isCreatedYearMonthDayFolder THEN
-			step := 8;
-		END_IF
-	
-	7:
-		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
-		fbCreateFolder.CreateYearMonthFolder();	
-		IF fbCreateFolder.isCreatedYearMonthFolder THEN
-			step := 8;
-		END_IF
-
-	
-	8:
-		TIMESTRUCT.wYear := TIMESTRUCT.wYear + 1;
-		calTimeStruct(TimeStruct := TimeStruct);
-		step := 5;	
-END_CASE
-
-
-
-(*------------------------------------ TEST ------------------------------------------------*)]]></ST>
+      <ST><![CDATA[CreateFolder();]]></ST>
     </Implementation>
   </POU>
 </TcPlcObject>

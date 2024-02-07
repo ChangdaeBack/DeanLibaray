@@ -21,31 +21,34 @@
     <Compile Include="Common\StepTimeOutTimer.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\CalculateTimeStruct.TcPOU">
+    <Compile Include="Log\CreateFolder\CalculateTimeStruct.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\Dean_DUT\CreateDirBusy.TcDUT">
+    <Compile Include="Log\CreateFolder\DUT\CreateDirBusy.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\Dean_DUT\MethodStatus.TcDUT">
+    <Compile Include="Log\CreateFolder\DUT\MethodStatus.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\Dean_DUT\ST_CreateDirBusy.TcDUT">
+    <Compile Include="Log\CreateFolder\DUT\ST_CreateDirBusy.TcDUT">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\FB_CreateFolder.TcPOU">
+    <Compile Include="Log\CreateFolder\FB_CreateFolder.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\FB_DirectoryControl.TcPOU">
+    <Compile Include="Log\CreateFolder\FB_DirectoryControl.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\FB_UpdateCurrentSystemTime.TcPOU">
+    <Compile Include="Log\CreateFolder\FB_UpdateCurrentSystemTime.TcPOU">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Log\F_GetDayOfWeek.TcPOU">
+    <Compile Include="Log\CreateFolder\F_GetDayOfWeek.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="PlcTask.TcTTO">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="POUs\CreateFolder.TcPOU">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="POUs\MAIN.TcPOU">
@@ -64,8 +67,9 @@
   <ItemGroup>
     <Folder Include="GVLs" />
     <Folder Include="Log" />
-    <Folder Include="Log\Dean_DUT" />
+    <Folder Include="Log\CreateFolder\DUT" />
     <Folder Include="Common" />
+    <Folder Include="Log\CreateFolder" />
     <Folder Include="TcUnit" />
     <Folder Include="VISUs" />
     <Folder Include="POUs" />

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1" ProductVersion="3.1.4024.12">
+  <POU Name="CreateFolder" Id="{49cc03f5-942a-4c2b-a96a-2ecee823372b}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM CreateFolder
+VAR
+	fbCreateFolder : FB_CreateFolder(sNetID := '', sBasePath := 'C:\createFoldertest\');
+	fbUpdateSystemTime : FB_UpdateCurrentSystemTime;
+	sPathTest : T_MaxString  := 'C:\test';
+	step : INT;
+	TimeStruct : TIMESTRUCT;
+	bInit: BOOL;
+	calTimeStruct : CalculateTimeStruct;
+	bTest: BOOL;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fbUpdateSystemTime();
+IF bInit THEN
+	bInit := FALSE;
+	TIMESTRUCT := fbUpdateSystemTime.updatedSystemTime;
+END_IF
+
+CASE step OF
+	5:
+		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
+		fbCreateFolder.CreateYearFolder();
+		IF fbCreateFolder.isCreatedYearFolder THEN
+			step := 8;
+		END_IF
+	
+	6:
+		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
+		fbCreateFolder.CreateYearMonthDayFolder();
+		IF fbCreateFolder.isCreatedYearMonthDayFolder THEN
+			step := 8;
+		END_IF
+	
+	7:
+		fbCreateFolder.SetTimeStruct(TIMESTRUCT);
+		fbCreateFolder.CreateYearMonthFolder();	
+		IF fbCreateFolder.isCreatedYearMonthFolder THEN
+			step := 8;
+		END_IF
+	
+	8: (* Increase Month or Year or Day for Test *)
+		TIMESTRUCT.wYear := TIMESTRUCT.wYear + 1;
+		calTimeStruct(TimeStruct := TimeStruct);
+		step := 5;	
+END_CASE]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
